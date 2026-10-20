@@ -1,0 +1,86 @@
+﻿@using Mini_Cinema.ViewModel.Admin
+@model AdminIndexData
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cinima Admin Dashboard</title>
+    <link href="~/css//Admin/Home/Index.css" rel="stylesheet"></link>
+
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand"><h1>CINIMA</h1><p>Admin Dashboard</p></div>
+        <nav class="nav">
+            <a href="#" class="active">Home</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="GetAllMovies">Movies</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="GetAllCategories">Categories</a>
+            <a asp-area="Admin" asp-controller="Home" asp-action="GetAllActors">Actors</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <h2 class="title">OVERVIEW</h2>
+        <p class="sub">Everything at a glance</p>
+
+        <section class="stats">
+            <div class="stat"><b>@Model.Movies.Count()</b><span>Movies</span></div>
+            <div class="stat"><b>@Model.Categories.Count()</b><span>Categories</span></div>
+            <div class="stat"><b>@Model.Actors.Count()</b><span>Actors</span></div>
+        </section>
+
+        <div class="actions">
+            <a asp-area="Admin" asp-controller="Movie" asp-action="Create" class="btn primary">Add movie</a>
+            <a asp-area="Admin" asp-controller="Category" asp-action="Create" class="btn">Add category</a>
+            <a asp-area="Admin" asp-controller="Actor" asp-action="Create" class="btn">Add Actor</a>
+        </div>
+
+        <div class="grid">
+            <section class="panel">
+                <h3>Latest movies</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th></th><th>Name</th><th>Cinema</th><th>Status</th></tr></thead>
+                        <tbody>
+                            @{
+                                int CountLatest = 4;
+                                var LatesMovies = Model.Movies.OrderByDescending(m => m.Id).Take(CountLatest).ToList();
+
+                            }
+                            @foreach (var latest in LatesMovies)
+                            {
+                                <tr><td><div class="thumb">▶</div></td><td>@latest.Name</td><td>@latest.Cinema.Name</td><td><span class="badge b-now">@latest.Status</span></td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3>Movies per category</h3>
+                @{
+                    int Max = Model.Movies
+                    .GroupBy(m => m.CategoryId)
+                    .Select(g => g.Count())
+                    .OrderByDescending(count => count)
+                    .First();
+                }
+                @foreach (var c in Model.Categories)
+                {
+                        int n = Model.Movies.Count(m => m.CategoryId == c.Id);
+                        <div class="bar-row"><span>@c.Name</span><div class="bar"><i style="width:@(((float)n/Max)*100)%"></i></div><em>@Model.Movies.Where(m => m.CategoryId == c.Id).Count()</em></div>
+                }
+            </section>
+        </div>
+    </main>
+
+
+
+</body>
+</html>
+
+ 

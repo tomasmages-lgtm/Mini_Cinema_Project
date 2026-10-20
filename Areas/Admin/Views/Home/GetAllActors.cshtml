@@ -1,0 +1,54 @@
+﻿@using Mini_Cinema.DataAccess;
+@model IEnumerable<Actor>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Latest movies</title>
+    <link href="~/css/admin/form/index.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="panel">
+        <h2>All Actors
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Profile</th>
+                        <th>Fname</th>
+                        <th>LastName</th>
+                        <th>Work At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model)
+                    {
+                        <tr>
+                            <td><img class="avatar" src="~/Mini _Cinema_Img/Actors_Images/@a.Img"></img></td>
+                            <td>@a.FName</td>
+                            <td>@a.LName</td>
+                                @{
+                                    ApplicationDbContext _MyContext = new ApplicationDbContext();
+                                    int n = _MyContext.MovieActors.Count(m => m.ActorId == a.Id);
+                                }
+                            <td>@n Movies</td>
+                            <td><div class="actions"><a href="/Admin/Actor/Update?Id=@a.Id" class="btn edit" title="Edit" aria-label="Edit">✎ Edit</a><a href="/Admin/Actor/Delete?Id=@a.Id" class="btn del" title="Delete" aria-label="Delete">🗑 Delete</a></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+<style>
+.avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #444;
+}
+</style>

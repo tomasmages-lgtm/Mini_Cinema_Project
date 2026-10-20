@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Movie>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Latest movies</title>
+    <link href="~/css/admin/form/index.css" rel="stylesheet" />
+
+
+</head>
+<body>
+    <div class="panel">
+        <h2>Latest movies</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th></th><th>Name</th><th>Category</th><th>Price</th><th>Cienema</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td class="play">▶</td>
+                            <td>@m.Name</td>
+                            <td>@m.Category.Name</td>
+                            <td>@m.Price</td>
+                            <td>@m.Cinema.Name</td>
+                            <td><span class="badge">@m.Status</span></td>
+                            <td><div class="actions"><a href="/Admin/Movie/Update?Id=@m.Id" class="btn edit" title="Edit" aria-label="Edit">✎ Edit</a><a href="/Admin/Movie/Delete?Id=@m.Id" class="btn del btn-delete" title="Delete" aria-label="Delete">🗑 Delete</a></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    document.querySelectorAll(".btn-delete").forEach(link => {
+        link.addEventListener("click", function (e) {
+            e.preventDefault();
+            const url = this.href;
+
+            swalWithBootstrapButtons.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    swalWithBootstrapButtons.fire({
+                        title: "Cancelled",
+                        text: "Your movie is safe :)",
+                        icon: "error"
+                    });
+                }
+            });
+        });
+    });
+</script>

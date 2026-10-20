@@ -1,0 +1,60 @@
+﻿@using Mini_Cinema.ViewModel.Customer;
+@model FilterVM
+<div class="search-strip my-3">
+    <form class="search-bar" method="get">
+ 
+        <select name="MovieId" aria-label="Search by movie">
+            <option selected>Search by movie</option>
+            @foreach (var movie in ViewBag.Movies)
+                {
+                <option value="@movie.Id">@movie.Name</option>
+                }
+            </select>
+ 
+        <select name="CategoryId" aria-label="Search by category">
+            <option selected>Search by category</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+ 
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+
+
+@foreach (var movie in Model.Movies)
+{
+    <article class="movie-card">
+        <img class="movie-card__img" src="~/Mini _Cinema_Img/Movies_Images/@movie.MainImg" />
+
+        <div class="movie-card__content">
+            <h3 class="movie-card__title">@movie.Name</h3>
+
+            <div class="movie-card__meta">
+                <span class="movie-card__badge">@movie.DateTime</span>
+                <span class="movie-card__badge">@movie.Price EGP</span>
+                <a class="movie-card__info" href="#">Info &rsaquo;</a>
+            </div>
+        </div>
+    </article>
+
+}
+
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="/Customer/Home/Index?Page=@i&MovieId=@Context.Request.Query["MovieId"]&CategoryId=@Context.Request.Query["CategoryId"]">
+                    @i
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
+
+<link href="~/css/Customer/home/index.css" rel="stylesheet" />

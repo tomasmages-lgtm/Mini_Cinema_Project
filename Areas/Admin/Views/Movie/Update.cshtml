@@ -1,0 +1,159 @@
+﻿@using Mini_Cinema.DataAccess
+@using Mini_Cinema.ViewModel.Admin
+@model FillMovieFormVM
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add movie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-black text-white">
+
+    <div class="container py-5">
+        <h2 class="mb-4">Add movie</h2>
+
+        <form method="post" enctype="multipart/form-data">
+            <input type="hidden" name="Movie.Id" value="@Model.Movie.Id"></input>
+
+            <div class="mb-3">
+                <label for="Name" class="form-label">Name</label>
+                <input type="text" id="Name" name="Movie.Name" value="@Model.Movie.Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Description" class="form-label">Description</label>
+                <input type="text" id="Description" name="Movie.Description" value="@Model.Movie.Description" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Price" class="form-label">Price</label>
+                <input type="number" step="0.01" id="Price" name="Movie.Price" value="@Model.Movie.Price" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Category" class="form-label">Category</label>
+                <select id="Category" name="Movie.CategoryId" class="form-select">
+                    @foreach (var c in Model.Categories)
+                    {
+                                @if (Model.Movie.CategoryId == c.Id)
+                                {
+                                    <option selected value="@c.Id">@c.Name</option>
+                                }
+                                else
+                                {
+                            <option value="@c.Id">@c.Name</option>
+                                }
+                            }
+                </select>
+            </div>
+            
+
+            <div class="form-check">
+            <label>Actors : </label>
+            <br></br>
+                @foreach (var actor in Model.Actors)
+                    {
+                    ApplicationDbContext _MyContext = new ApplicationDbContext();
+                    @if (_MyContext.MovieActors.Any(ma => ma.MovieId == Model.Movie.Id && ma.ActorId == actor.Id)) //help in query from cluade (revision)
+                            {
+                        <input class="form-check-input" checked type="checkbox"
+                               name="ActorId" value="@actor.Id" id="actor_@actor.Id" />
+                        <label class="form-check-label">@actor.FName @actor.LName</label>
+                        <br>
+                            }
+                            else
+                            {
+                        <input class="form-check-input" type="checkbox"
+                               name="ActorId" value="@actor.Id" id="actor_@actor.Id" />
+                        <label class="form-check-label">@actor.FName @actor.LName</label>
+                        <br>
+                            }
+                        }
+        </div>
+
+
+            <div class="mb-3">
+                <label for="Cinema" class="form-label">Cinema</label>
+                <select id="Cinema" name="Movie.CinemaId" class="form-select">
+                    @foreach (var c in Model.Cinemas)
+                    {
+                                @if (Model.Movie.CinemaId == c.Id)
+                                {
+                                    <option selected value="@c.Id">@c.Name</option>
+                                }
+                                else
+                                {
+                                <option value="@c.Id">@c.Name</option>
+                                }
+                            }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="Status" class="form-label">Status</label>
+                <select id="Status" name="Movie.Status" class="form-select">
+                            @if (Model.Movie.Status==MovieState.NowShowing)
+                            {
+                                <option selected value="2">NowShowing</option>
+                                <option  value="1">ComingSoon</option>
+                            }
+                            else
+                            {
+                        <option value="2">NowShowing</option>
+                        <option selected value="1">ComingSoon</option>
+                            }
+                        </select>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="imgFile" class="form-label">Main image</label>
+                <input type="file" id="imgFile" name="ActualFile" class="form-control" accept="image/*" />
+
+                <img id="imgPreview"
+                    src="~/Mini _Cinema_Img/Movies_Images/@Model.Movie.MainImg"
+                    alt="Preview"
+                    class="img-thumbnail mt-2"
+                    style="max-width:200px;" />
+            </div>
+
+
+            <div class="mb-3">
+                <label for="imgFile" class="form-label">sub images</label>
+                <input type="file" id="imgFile" name="ActualFiles" class="form-control" accept="image/*" multiple/>
+                @foreach (var item in Model.MovieSubImages)
+                        {
+                    <img id="imgPreview"
+                         src="~/Mini _Cinema_Img/Movies_SubImages/@item.SubImage"
+                         alt="Preview"
+                         class="img-thumbnail mt-2"
+                         style="max-width:200px;" />
+                        }
+                    </div>
+
+
+            <div class="mb-4">
+                <label for="DateTime" class="form-label">Date and time</label>
+                <input type="datetime-local" id="DateTime" name="Movie.DateTime" value="@Model.Movie.DateTime.ToString("yyyy-MM-ddTHH:mm")" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-warning px-4">Save</button>
+            <a href="/Admin" class="btn btn-outline-light ms-2">Cancel</a>
+        </form>
+    </div>
+
+</body>
+</html>
+
+<script>
+    document.getElementById("imgFile").addEventListener("change", function () {
+        const file = this.files[0];
+        const preview = document.getElementById("imgPreview");
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = "block";
+        }
+    });
+</script>
