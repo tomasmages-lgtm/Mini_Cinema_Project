@@ -2,13 +2,15 @@
 using Mini_Cinema.DataAccess;
 using Mini_Cinema.Models;
 using Mini_Cinema.ViewModel.Admin;
+using Mini_Cinema.Repositories;
 
 namespace Mini_Cinema.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class ActorController : Controller
     {
-        ApplicationDbContext _MyContext = new ApplicationDbContext();
+        //ApplicationDbContext _MyContext = new ApplicationDbContext();
+        Repository<Actor> ActorRepository = new Repository<Actor>();
         public IActionResult Index()
         {
             return View();
@@ -19,7 +21,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
         }
         [HttpPost]
 
-        public IActionResult Create(Actor actor,IFormFile ActualFile) {
+        public async Task<IActionResult> Create(Actor actor,IFormFile ActualFile) {
             if (ActualFile != null && ActualFile.Length > 0) {
                 var ImageName = Guid.NewGuid().ToString() + "-" + ActualFile.FileName;
                 var ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Mini _Cinema_Img\\Actors_Images", ImageName);
@@ -29,20 +31,22 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     ActualFile.CopyTo(stream);
                 }
 
-                _MyContext.Actors.Add(actor);
-                _MyContext.SaveChanges();
+                //_MyContext.Actors.Add(actor);
+                await ActorRepository.AddAsync(actor);
+                //_MyContext.SaveChanges();
+                await ActorRepository.CommitAsync();
             }
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
-        public IActionResult Update(int Id) {
-            var Actor = _MyContext.Actors.FirstOrDefault(a => a.Id == Id);
+        public async Task<IActionResult> Update(int Id) {
+            var Actor = await ActorRepository.GetOneAsync(a => a.Id == Id);//
             return View(Actor);
         }
         [HttpPost]
-        public IActionResult Update(Actor actor,IFormFile ActualFile)
+        public async Task<IActionResult> Update(Actor actor,IFormFile ActualFile)
         {
-            var OldActor = _MyContext.Actors.FirstOrDefault(a => a.Id == actor.Id);
+            var OldActor =await ActorRepository.GetOneAsync(a => a.Id == actor.Id);
             OldActor.FName = actor.FName;
             OldActor.LName = actor.LName;
             if (ActualFile != null && ActualFile.Length > 0) {
@@ -59,17 +63,20 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                 }
                 OldActor.Img = ImageName;
             }
-            _MyContext.SaveChanges();
+            //_MyContext.SaveChanges();
+            await ActorRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
-        public IActionResult Delete(int Id) {
-            var Actor = _MyContext.Actors.FirstOrDefault(a => a.Id == Id);
+        public async Task<IActionResult> Delete(int Id) {
+            var Actor = await ActorRepository.GetOneAsync(a => a.Id == Id);//
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Mini _Cinema_Img\\Actors_Images", Actor.Img);
             if (System.IO.File.Exists(path)) {
                 System.IO.File.Delete(path);
             }
-            _MyContext.Actors.Remove(Actor);
-            _MyContext.SaveChanges();
+            //_MyContext.Actors.Remove(Actor);
+            ActorRepository.Remove(Actor);
+            //_MyContext.SaveChanges();
+            await ActorRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
     }

@@ -49,7 +49,6 @@
                             @{
                                 int CountLatest = 4;
                                 var LatesMovies = Model.Movies.OrderByDescending(m => m.Id).Take(CountLatest).ToList();
-
                             }
                             @foreach (var latest in LatesMovies)
                             {

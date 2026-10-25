@@ -3,25 +3,35 @@ using Microsoft.EntityFrameworkCore;
 using Mini_Cinema.DataAccess;
 using Mini_Cinema.Models;
 using Mini_Cinema.ViewModel.Admin;
+using Mini_Cinema.Repositories;
 
 namespace Mini_Cinema.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class MovieController : Controller
     {
-        ApplicationDbContext _MyContext = new ApplicationDbContext();
+        //ApplicationDbContext _MyContext = new ApplicationDbContext();
+        Repository<Movie> MovieRepository = new Repository<Movie>();
+        Repository<Category> CategoryRepository = new Repository<Category>();
+        Repository<Cinema> CinemaRepository = new Repository<Cinema>();
+        Repository<Actor> ActorRepository = new Repository<Actor>();
+        Repository<MovieSubImages> MovieSubImageRepository = new Repository<MovieSubImages>();
+        Repository<MovieActors> MovieActorRepository = new Repository<MovieActors>();
+        MovieActorsRemoveRepository MovieActorDel = new MovieActorsRemoveRepository();
+        MovieSubImagesRemoveRepository MovieSubImagesDel = new MovieSubImagesRemoveRepository();
+
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View(new FillMovieFormVM
             {
-                Categories = _MyContext.categories,
-                Cinemas = _MyContext.cinemas,
-                Actors = _MyContext.Actors
+                Categories = await CategoryRepository.GetAllAsync(),
+                Cinemas = await CinemaRepository.GetAllAsync(),
+                Actors = await ActorRepository.GetAllAsync()
             });
         }
         [HttpPost]
-        public IActionResult Create(MovieDataVM moviedata)
+        public async Task<IActionResult> Create(MovieDataVM moviedata)
         {
             if (moviedata.ActualFile != null && moviedata.ActualFile.Length > 0)
             {
@@ -33,8 +43,10 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                 }
                 moviedata.Movie.MainImg = ImageName;
             }
-            var CreatedMovie = _MyContext.Movies.Add(moviedata.Movie);
-            _MyContext.SaveChanges();
+            //var CreatedMovie = _MyContext.Movies.Add(moviedata.Movie);
+            var CreatedMovie = await MovieRepository.AddAsync(moviedata.Movie);
+            //_MyContext.SaveChanges();
+            await MovieRepository.CommitAsync();
 
             //SubImages
             //Adding in DataBase in Many TYo Many Table 
@@ -49,46 +61,56 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     {
                         image.CopyTo(stream);
                     }
-                    _MyContext.MovieSubImages.Add(new MovieSubImages
+                    //_MyContext.MovieSubImages.Add(new MovieSubImages
+                    //{
+                    //    SubImage = ImageName,
+                    //    MovieId = CreatedMovie.Entity.Id
+                    //});
+
+                    await MovieSubImageRepository.AddAsync(new MovieSubImages
                     {
                         SubImage = ImageName,
                         MovieId = CreatedMovie.Entity.Id
                     });
                 }
-                _MyContext.SaveChanges();
+                //_MyContext.SaveChanges();
+                await MovieRepository.CommitAsync();
             }
             if (moviedata.ActorId != null && moviedata.ActorId.Count > 0)
             {
                 foreach (var actorid in moviedata.ActorId)
                 {
-                    _MyContext.MovieActors.Add(new MovieActors
+                    await MovieActorRepository.AddAsync(new MovieActors
                     {
                         ActorId = actorid,
                         MovieId = CreatedMovie.Entity.Id
                     });
                 }
             }
-            _MyContext.SaveChanges();
+            //_MyContext.SaveChanges();
+             await MovieRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
-        public IActionResult Update(int Id)
+        public async Task<IActionResult> Update(int Id)
         {
-            var Movie = _MyContext.Movies.Include(m => m.Category).Include(m => m.Cinema).FirstOrDefault(m => m.Id == Id);
+            //var Movie = _MyContext.Movies.Include(m => m.Category).Include(m => m.Cinema).FirstOrDefault(m => m.Id == Id);
+            var Movie =await MovieRepository.GetOneAsync(m => m.Id == Id, [m => m.Category, m => m.Cinema]);
             return View(new FillMovieFormVM
             {
                 Movie = Movie,
-                Categories = _MyContext.categories,
-                Cinemas = _MyContext.cinemas,
-                Actors = _MyContext.Actors,
-                MovieSubImages = _MyContext.MovieSubImages.Where(s => s.MovieId == Id)
+                Categories = await CategoryRepository.GetAllAsync(),
+                Cinemas = await CinemaRepository.GetAllAsync(),
+                Actors = await ActorRepository.GetAllAsync(),
+                MovieSubImages =await MovieSubImageRepository.GetAllAsync(s => s.MovieId == Id)
             });
         }
 
         [HttpPost]
-        public IActionResult Update(MovieDataVM moviedate)
+        public async Task<IActionResult> Update(MovieDataVM moviedate)
         {
-            var OldMovie = _MyContext.Movies.FirstOrDefault(m => m.Id == moviedate.Movie.Id);
+            //var OldMovie = _MyContext.Movies.FirstOrDefault(m => m.Id == moviedate.Movie.Id);
+            var OldMovie = await MovieRepository.GetOneAsync(m => m.Id == moviedate.Movie.Id);
             if (moviedate.Movie != null)
             {
                 OldMovie.Name = moviedate.Movie.Name;
@@ -112,11 +134,13 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     }
                     OldMovie.MainImg = ImageName;
                 }
-                _MyContext.SaveChanges();
+                //_MyContext.SaveChanges();
+                await MovieRepository.CommitAsync();
             }
             if (moviedate.ActualFiles != null && moviedate.ActualFiles.Count > 0)
             {
-                var OldSubImages = _MyContext.MovieSubImages.Where(s => s.MovieId == moviedate.Movie.Id);
+                //var OldSubImages = _MyContext.MovieSubImages.Where(s => s.MovieId == moviedate.Movie.Id);
+                var OldSubImages =await MovieSubImageRepository.GetAllAsync(s => s.MovieId == moviedate.Movie.Id);
                 foreach (var img in OldSubImages)
                 {
                     var oldPath = Path.Combine(Directory.GetCurrentDirectory(),
@@ -125,7 +149,8 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     if (System.IO.File.Exists(oldPath))
                         System.IO.File.Delete(oldPath);
                 }
-                _MyContext.RemoveRange(OldSubImages);
+                //_MyContext.RemoveRange(OldSubImages);
+                MovieSubImagesDel.RemoveRange(OldSubImages);
 
                 foreach (var file in moviedate.ActualFiles)
                 {
@@ -137,43 +162,61 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                         {
                             file.CopyTo(stream);
                         }
-                        _MyContext.MovieSubImages.Add(new MovieSubImages
+                        //_MyContext.MovieSubImages.Add(new MovieSubImages
+                        //{
+                        //    SubImage = fileName,
+                        //    MovieId = moviedate.Movie.Id
+                        //});
+
+                        await MovieSubImageRepository.AddAsync(new MovieSubImages
                         {
                             SubImage = fileName,
                             MovieId = moviedate.Movie.Id
                         });
                     }
                 }
-                _MyContext.SaveChanges();
+                //_MyContext.SaveChanges();
+            await MovieRepository.CommitAsync();
             }
 
 
-            var oldActors = _MyContext.MovieActors
-                .Where(ma => ma.MovieId == OldMovie.Id);
-            _MyContext.MovieActors.RemoveRange(oldActors);
+            //var oldActors = _MyContext.MovieActors
+            //    .Where(ma => ma.MovieId == OldMovie.Id);
+            var oldActors= await MovieActorRepository.GetAllAsync(ma => ma.MovieId == OldMovie.Id);
+            //_MyContext.MovieActors.RemoveRange(oldActors);
+            MovieActorDel.RemoveRange(oldActors);
 
             if (moviedate.ActorId != null)
             {
                 foreach (var actorId in moviedate.ActorId)
                 {
-                    _MyContext.MovieActors.Add(new MovieActors
+                    //_MyContext.MovieActors.Add(new MovieActors
+                    //{
+                    //    MovieId = OldMovie.Id,
+                    //    ActorId = actorId
+                    //});
+                    await MovieActorRepository.AddAsync(new MovieActors
                     {
                         MovieId = OldMovie.Id,
                         ActorId = actorId
                     });
+
                 }
             }
-            _MyContext.SaveChanges();
+            //_MyContext.SaveChanges();
+            await MovieRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Delete(int Id) {
-            var Movie = _MyContext.Movies.FirstOrDefault(m => m.Id == Id);
+        public async Task<IActionResult> Delete(int Id) {
+            //var Movie = _MyContext.Movies.FirstOrDefault(m => m.Id == Id);
+            var Movie =await MovieRepository.GetOneAsync(m => m.Id == Id);
             var OldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Mini _Cinema_Img\\Movies_Images", Movie.MainImg);
             if (System.IO.File.Exists(OldPath)) {
                 System.IO.File.Delete(OldPath);
             }
-            var OldSubs = _MyContext.MovieSubImages.Where(s => s.MovieId == Movie.Id);
+            //var OldSubs = _MyContext.MovieSubImages.Where(s => s.MovieId == Movie.Id);
+            var OldSubs =await MovieSubImageRepository.GetAllAsync(s => s.MovieId == Movie.Id);
             foreach (var item in OldSubs)
             {
                 var OldSubPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Mini _Cinema_Img\\Movies_SubImages", item.SubImage);
@@ -181,8 +224,10 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     System.IO.File.Delete(OldSubPath);
                 }
             }
-            _MyContext.Movies.Remove(Movie);
-            _MyContext.SaveChanges();
+            //_MyContext.Movies.Remove(Movie);
+            MovieRepository.Remove(Movie);
+            //_MyContext.SaveChanges();
+            await MovieRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
     }
