@@ -17,8 +17,9 @@ namespace Mini_Cinema.Areas.Admin.Controllers
         Repository<Actor> ActorRepository = new Repository<Actor>();
         Repository<MovieSubImages> MovieSubImageRepository = new Repository<MovieSubImages>();
         Repository<MovieActors> MovieActorRepository = new Repository<MovieActors>();
-        MovieActorsRemoveRepository MovieActorDel = new MovieActorsRemoveRepository();
-        MovieSubImagesRemoveRepository MovieSubImagesDel = new MovieSubImagesRemoveRepository();
+        RemoveRangeRepository<MovieActors> MovieActorDel = new RemoveRangeRepository<MovieActors>();
+        RemoveRangeRepository<MovieSubImages> MovieSubImageDel = new RemoveRangeRepository<MovieSubImages>();
+
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -150,7 +151,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                         System.IO.File.Delete(oldPath);
                 }
                 //_MyContext.RemoveRange(OldSubImages);
-                MovieSubImagesDel.RemoveRange(OldSubImages);
+                MovieSubImageDel.RemoveRange(OldSubImages);
 
                 foreach (var file in moviedate.ActualFiles)
                 {

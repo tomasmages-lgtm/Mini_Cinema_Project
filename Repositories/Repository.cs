@@ -14,12 +14,12 @@ namespace Mini_Cinema.Repositories
             _DbSet = _MyContext.Set<T>();
         }
 
-        public async Task<EntityEntry<T>> AddAsync(T entity)
+        public async Task<EntityEntry<T>> AddAsync(T entity) // Done
         {
             return await _DbSet.AddAsync(entity);
         }
 
-        public void Remove(T entity)
+        public void Remove(T entity) // Done
         {
             _DbSet.Remove(entity);
         }
@@ -45,7 +45,7 @@ namespace Mini_Cinema.Repositories
             Expression<Func<T, bool>>? filter = null,
             Expression<Func<T, object>>?[] includes=null
             ){
-            var Entities =  _DbSet.AsQueryable();
+            var Entities =  _DbSet.AsQueryable(); // GetAll ==> _MyContex.Table<T>
             if (filter != null) {
                 Entities = Entities.Where(filter);
             }
