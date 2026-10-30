@@ -15,10 +15,8 @@ namespace Mini_Cinema.Areas.Admin.Controllers
         Repository<Category> CategoryRepository = new Repository<Category>();
         Repository<Cinema> CinemaRepository = new Repository<Cinema>();
         Repository<Actor> ActorRepository = new Repository<Actor>();
-        Repository<MovieSubImages> MovieSubImageRepository = new Repository<MovieSubImages>();
-        Repository<MovieActors> MovieActorRepository = new Repository<MovieActors>();
-        RemoveRangeRepository<MovieActors> MovieActorDel = new RemoveRangeRepository<MovieActors>();
-        RemoveRangeRepository<MovieSubImages> MovieSubImageDel = new RemoveRangeRepository<MovieSubImages>();
+        ExtentionRepository<MovieSubImages> MovieSubImageRepository = new ExtentionRepository<MovieSubImages>();
+        ExtentionRepository<MovieActors> MovieActorRepository = new ExtentionRepository<MovieActors>();
 
 
         [HttpGet]
@@ -75,7 +73,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     });
                 }
                 //_MyContext.SaveChanges();
-                await MovieRepository.CommitAsync();
+                await MovieSubImageRepository.CommitAsync();
             }
             if (moviedata.ActorId != null && moviedata.ActorId.Count > 0)
             {
@@ -89,7 +87,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                 }
             }
             //_MyContext.SaveChanges();
-             await MovieRepository.CommitAsync();
+            await MovieActorRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
         [HttpGet]
@@ -151,7 +149,8 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                         System.IO.File.Delete(oldPath);
                 }
                 //_MyContext.RemoveRange(OldSubImages);
-                MovieSubImageDel.RemoveRange(OldSubImages);
+                MovieSubImageRepository.RemoveRange(OldSubImages);
+                await MovieSubImageRepository.CommitAsync();
 
                 foreach (var file in moviedate.ActualFiles)
                 {
@@ -177,6 +176,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                     }
                 }
                 //_MyContext.SaveChanges();
+                await MovieSubImageRepository.CommitAsync();
             await MovieRepository.CommitAsync();
             }
 
@@ -185,8 +185,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
             //    .Where(ma => ma.MovieId == OldMovie.Id);
             var oldActors= await MovieActorRepository.GetAllAsync(ma => ma.MovieId == OldMovie.Id);
             //_MyContext.MovieActors.RemoveRange(oldActors);
-            MovieActorDel.RemoveRange(oldActors);
-
+            MovieActorRepository.RemoveRange(oldActors);
             if (moviedate.ActorId != null)
             {
                 foreach (var actorId in moviedate.ActorId)
@@ -205,7 +204,7 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                 }
             }
             //_MyContext.SaveChanges();
-            await MovieRepository.CommitAsync();
+            await MovieActorRepository.CommitAsync();
             return RedirectToAction("Index", "Home");
         }
 
