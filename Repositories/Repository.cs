@@ -5,13 +5,14 @@ using System.Linq.Expressions;
 
 namespace Mini_Cinema.Repositories
 {
-    public class Repository<T>where T :class
+    public class Repository <T>:IRepository<T> where T :class
     {
-        protected ApplicationDbContext _MyContext = new ApplicationDbContext();
+        protected ApplicationDbContext _MyContext;//= new ApplicationDbContext();
         private DbSet<T> _DbSet;
-        public Repository()
+        public Repository(ApplicationDbContext myContext)
         {
-            _DbSet = _MyContext.Set<T>();
+            _MyContext = myContext;
+            _DbSet = _MyContext.Set<T>(); //  شوف ال جينيرك بتاعك نوعه ايه وخليليهولى في  dbset
         }
 
         public async Task<EntityEntry<T>> AddAsync(T entity) // Done

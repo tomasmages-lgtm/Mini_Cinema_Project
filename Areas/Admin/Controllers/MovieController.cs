@@ -11,13 +11,22 @@ namespace Mini_Cinema.Areas.Admin.Controllers
     public class MovieController : Controller
     {
         //ApplicationDbContext _MyContext = new ApplicationDbContext();
-        Repository<Movie> MovieRepository = new Repository<Movie>();
-        Repository<Category> CategoryRepository = new Repository<Category>();
-        Repository<Cinema> CinemaRepository = new Repository<Cinema>();
-        Repository<Actor> ActorRepository = new Repository<Actor>();
-        ExtentionRepository<MovieSubImages> MovieSubImageRepository = new ExtentionRepository<MovieSubImages>();
-        ExtentionRepository<MovieActors> MovieActorRepository = new ExtentionRepository<MovieActors>();
+        IRepository<Movie> MovieRepository;
+        IRepository<Category> CategoryRepository;
+        IRepository<Cinema> CinemaRepository;
+        IRepository<Actor> ActorRepository;
+        IExtentionRepository<MovieSubImages> MovieSubImageRepository;
+        IExtentionRepository<MovieActors> MovieActorRepository;
 
+        public MovieController(IRepository<Movie> movieRepository, IRepository<Category> categoryRepository, IRepository<Cinema> cinemaRepository, IRepository<Actor> actorRepository, IExtentionRepository<MovieSubImages> movieSubImageRepository, IExtentionRepository<MovieActors> movieActorRepository)
+        {
+            MovieRepository = movieRepository;
+            CategoryRepository = categoryRepository;
+            CinemaRepository = cinemaRepository;
+            ActorRepository = actorRepository;
+            MovieSubImageRepository = movieSubImageRepository;
+            MovieActorRepository = movieActorRepository;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Create()

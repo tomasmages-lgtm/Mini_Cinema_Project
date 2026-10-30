@@ -10,7 +10,13 @@ namespace Mini_Cinema.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         //ApplicationDbContext _MyContext = new ApplicationDbContext();
-        Repository<Category> CategoryRepository = new Repository<Category>();
+        IRepository<Category> CategoryRepository;
+
+        public CategoryController(IRepository<Category> categoryRepository)
+        {
+            CategoryRepository = categoryRepository;
+        }
+
         public IActionResult Index()
         {
             return View();

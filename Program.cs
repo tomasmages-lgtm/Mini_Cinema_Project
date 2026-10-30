@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Mini_Cinema.Repositories;
+
 namespace Mini_Cinema
 {
     public class Program
@@ -8,6 +11,18 @@ namespace Mini_Cinema
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(ConnectionString)
+                );
+            builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
+            builder.Services.AddScoped<IRepository<Movie>, Repository<Movie>>();
+            builder.Services.AddScoped<IRepository<Cinema>, Repository<Cinema>>();
+            builder.Services.AddScoped<IRepository<Actor>, Repository<Actor>>();
+            builder.Services.AddScoped<IExtentionRepository<MovieSubImages>, ExtentionRepository<MovieSubImages>>();
+            builder.Services.AddScoped<IExtentionRepository<MovieActors>, ExtentionRepository<MovieActors>>();
 
             var app = builder.Build();
 

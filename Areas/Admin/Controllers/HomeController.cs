@@ -14,10 +14,19 @@ namespace Mini_Cinema.Areas.Admin.Controllers
     [Area("Admin")]
     public class HomeController : Controller
     {
-        Repository<Category> CategoryRepository = new Repository<Category>();
-        Repository<Actor> ActorRepository = new Repository<Actor>();
-        Repository<Cinema> CinemaRepository = new Repository<Cinema>();
-        Repository<Movie> MovieRepository = new Repository<Movie>();
+        IRepository<Category> CategoryRepository;
+        IRepository<Actor> ActorRepository;
+        IRepository<Cinema> CinemaRepository;
+        IRepository<Movie> MovieRepository;
+
+        public HomeController(IRepository<Category> categoryRepository, IRepository<Actor> actorRepository, IRepository<Cinema> cinemaRepository, IRepository<Movie> movieRepository)
+        {
+            CategoryRepository = categoryRepository;
+            ActorRepository = actorRepository;
+            CinemaRepository = cinemaRepository;
+            MovieRepository = movieRepository;
+        }
+
         //ApplicationDbContext _MyContext = new ApplicationDbContext();
         public async Task<IActionResult> Index()
         {

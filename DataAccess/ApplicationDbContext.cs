@@ -5,13 +5,10 @@ namespace Mini_Cinema.DataAccess
 {
     public class ApplicationDbContext:DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=.;Initial Catalog=Mini_Cinema;" +
-            "Trusted_Connection=true;" +
-            "TrustServerCertificate=true;Encrypt=true");
-        }
+        public ApplicationDbContext() { }
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext>options):base(options){
+            }
         public DbSet<Actor> Actors { set; get; }
         public DbSet<Category> categories { set; get; }
         public DbSet<Cinema> cinemas { set; get; }

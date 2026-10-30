@@ -10,10 +10,15 @@ namespace Mini_Cinema.Areas.Customer.Controllers
     [Area("Customer")]
     public class HomeController : Controller
     {
-        Repository<Category> CategoryRepository = new Repository<Category>();
-        Repository<Movie> MovieRepository = new Repository<Movie>();
+        IRepository<Category> CategoryRepository;
+        IRepository < Movie > MovieRepository;
 
-        //ApplicationDbContext _MyContext = new ApplicationDbContext();
+        public HomeController(IRepository<Category> categoryRepository, IRepository<Movie> movieRepository)
+        {
+            CategoryRepository = categoryRepository;
+            MovieRepository = movieRepository;
+        }
+
         public async Task<IActionResult> Index(FilterVM filter)
         {
             var Movies =await MovieRepository.GetAllAsync();

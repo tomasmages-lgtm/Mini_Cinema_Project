@@ -10,7 +10,13 @@ namespace Mini_Cinema.Areas.Admin.Controllers
     public class ActorController : Controller
     {
         //ApplicationDbContext _MyContext = new ApplicationDbContext();
-        Repository<Actor> ActorRepository = new Repository<Actor>();
+        IRepository<Actor> ActorRepository;
+
+        public ActorController(IRepository<Actor> actorRepository)
+        {
+            ActorRepository = actorRepository;
+        }
+
         public IActionResult Index()
         {
             return View();
