@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model Actor
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8" />
@@ -13,13 +14,15 @@
 
         <form method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="FName" class="form-label">FName</label>
-                <input type="text" id="FName" name="FName" class="form-control" required />
+                <label asp-for="FName" class="form-label"></label>
+                <input asp-for="FName" class="form-control" />
+                <span asp-validation-for="FName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label for="LName" class="form-label">LName</label>
-                <input type="text" id="LName" name="LName" class="form-control" required />
+                <label asp-for="LName" class="form-label"></label>
+                <input asp-for="LName" class="form-control" />
+                <span asp-validation-for="LName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">

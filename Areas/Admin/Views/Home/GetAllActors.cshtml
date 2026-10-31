@@ -19,7 +19,6 @@
                         <th>Profile</th>
                         <th>Fname</th>
                         <th>LastName</th>
-                        <th>Work At</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,11 +28,6 @@
                             <td><img class="avatar" src="~/Mini _Cinema_Img/Actors_Images/@a.Img"></img></td>
                             <td>@a.FName</td>
                             <td>@a.LName</td>
-                                @{
-                                    ApplicationDbContext _MyContext = new ApplicationDbContext();
-                                    int n = _MyContext.MovieActors.Count(m => m.ActorId == a.Id);
-                                }
-                            <td>@n Movies</td>
                             <td><div class="actions"><a href="/Admin/Actor/Update?Id=@a.Id" class="btn edit" title="Edit" aria-label="Edit">✎ Edit</a><a href="/Admin/Actor/Delete?Id=@a.Id" class="btn del" title="Delete" aria-label="Delete">🗑 Delete</a></div></td>
                         </tr>
                     }

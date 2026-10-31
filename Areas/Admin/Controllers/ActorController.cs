@@ -26,8 +26,14 @@ namespace Mini_Cinema.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
+        public async Task<IActionResult> Create(Actor actor,IFormFile? ActualFile) {
+            ModelState.Remove("Img");
 
-        public async Task<IActionResult> Create(Actor actor,IFormFile ActualFile) {
+            if (!ModelState.IsValid)
+            {
+                return View(new Actor());
+            }
+
             if (ActualFile != null && ActualFile.Length > 0) {
                 var ImageName = Guid.NewGuid().ToString() + "-" + ActualFile.FileName;
                 var ImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Mini _Cinema_Img\\Actors_Images", ImageName);
@@ -36,7 +42,6 @@ namespace Mini_Cinema.Areas.Admin.Controllers
                 {
                     ActualFile.CopyTo(stream);
                 }
-
                 //_MyContext.Actors.Add(actor);
                 await ActorRepository.AddAsync(actor);
                 //_MyContext.SaveChanges();
