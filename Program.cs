@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Mini_Cinema.Migrations;
 using Mini_Cinema.Repositories;
 
 namespace Mini_Cinema
@@ -17,6 +19,12 @@ namespace Mini_Cinema
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(ConnectionString)
                 );
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
+            {
+                option.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
             builder.Services.AddScoped<IRepository<Movie>, Repository<Movie>>();
             builder.Services.AddScoped<IRepository<Cinema>, Repository<Cinema>>();
@@ -42,7 +50,7 @@ namespace Mini_Cinema
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
+                pattern: "{area=Identity}/{controller=Account}/{action=Register}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

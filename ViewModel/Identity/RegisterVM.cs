@@ -4,7 +4,6 @@ namespace Mini_Cinema.ViewModel.Identity
 {
     public class RegisterVM
     {
-        public int Id { set; get; }
         public string Name { set; get; }
 
         public string Address { set; get; }

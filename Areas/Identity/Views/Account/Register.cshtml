@@ -1,4 +1,5 @@
-
+@using Mini_Cinema.ViewModel.Identity;
+@model RegisterVM
 <div class="container auth-wrap">
     <div class="row justify-content-center">
         <div class="col-xl-4 col-lg-5 col-md-7 col-sm-10">
@@ -10,38 +11,38 @@
                 </div>
 
                 <div class="auth-body">
-                    <form asp-action="Register" method="post" novalidate>
+                    <form  asp-area="Identity" asp-controller="Account" asp-action="Register" method="post">
                         <div asp-validation-summary="ModelOnly" class="field-error mb-3"></div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Name" class="form-control" placeholder="Name" />
                             <label asp-for="Name"> Name</label>
-                            <span asp-validation-for="Name" class="field-error"></span>
+                            <span asp-validation-for="Name" class="field-error text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Address" class="form-control" placeholder="Address" />
                             <label asp-for="Address">Address </label>
-                            <span asp-validation-for="Address" class="field-error"></span>
+                            <span asp-validation-for="Address" class="field-error text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="UserName" class="form-control" placeholder="User Name" />
                             <label asp-for="UserName">UserName</label>
-                            <span asp-validation-for="UserName" class="field-error"></span>
+                            <span asp-validation-for="UserName" class="field-error text-danger"></span>
                         </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Email" type="email" class="form-control" placeholder="Email" />
                             <label asp-for="Email">Email</label>
-                            <span asp-validation-for="Email" class="field-error"></span>
+                            <span asp-validation-for="Email" class="field-error text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <div class="input-group flex-nowrap">
                                 <div class="form-floating flex-grow-1">
                                     <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
-                                    <label asp-for="Password">Password</label>
+                                    <label asp-for="Password" class="text-danger">Password</label>
                                 </div>
                             </div>
                             <span asp-validation-for="Password" class="field-error"></span>
@@ -51,7 +52,7 @@
                             <div class="input-group flex-nowrap">
                                 <div class="form-floating flex-grow-1">
                                     <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
-                                    <label asp-for="ConfirmPassword">ConfirmPassword</label>
+                                    <label asp-for="ConfirmPassword" class="text-danger">ConfirmPassword</label>
                                 </div>
                             </div>
                             <span asp-validation-for="ConfirmPassword" class="field-error"></span>
@@ -66,7 +67,7 @@
                 </div>
 
                 <div class="auth-footer">
-                    <a asp-action="Login"><i class="bi bi-arrow-left me-1"></i>Login</a>
+                    <a  asp-action="Login"><i class="bi bi-arrow-left me-1"></i>Login</a>
                 </div>
             </div>
         </div>

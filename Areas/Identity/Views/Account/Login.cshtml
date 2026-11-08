@@ -1,0 +1,74 @@
+﻿
+@model Mini_Cinema.ViewModel.Identity.LoginVM
+
+<div class="container auth-wrap">
+    <div class="row justify-content-center">
+        <div class="col-xl-4 col-lg-5 col-md-7 col-sm-10">
+            <div class="auth-card">
+
+                <div class="auth-header">
+                    <h3><i class="bi bi-box-arrow-in-right me-2"></i>Welcome Back</h3>
+                    <small>Login to book your next movie</small>
+                </div>
+
+                <div class="auth-body">
+                    <form asp-action="Login" method="post" novalidate>
+                        <div asp-validation-summary="ModelOnly" class="field-error mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="UserNameOrEmail" class="form-control" placeholder="Username or Email" autocomplete="username" />
+                            <label asp-for="UserNameOrEmail"></label>
+                            <span asp-validation-for="UserNameOrEmail" class="field-error"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="input-group flex-nowrap">
+                                <div class="form-floating flex-grow-1">
+                                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" autocomplete="current-password" />
+                                    <label asp-for="Password"></label>
+                                </div>
+                                <button class="btn toggle-password" type="button" data-target="Password" aria-label="Show password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="field-error"></span>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label remember-label"></label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-cinema btn-lg">
+                                <i class="bi bi-ticket-perforated me-1" asp"></i> Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="auth-footer">
+                    <span class="footer-text">Don't have an account?</span>
+                    <a asp-action="Register">Create one</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById(btn.dataset.target);
+                const icon = btn.querySelector('i');
+                const hidden = input.type === 'password';
+                input.type = hidden ? 'text' : 'password';
+                icon.classList.toggle('bi-eye', !hidden);
+                icon.classList.toggle('bi-eye-slash', hidden);
+            });
+        });
+    </script>
+}
