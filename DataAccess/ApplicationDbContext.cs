@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Mini_Cinema.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Mini_Cinema.DataAccess
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext:IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext() { }
 
