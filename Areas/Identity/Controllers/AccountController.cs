@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Mini_Cinema.Utility;
 using Mini_Cinema.ViewModel.Identity;
 using Mini_Cinema.ViewModel.Identity;
 
@@ -11,10 +13,13 @@ namespace Mini_Cinema.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _UserManager;
         private readonly SignInManager<ApplicationUser> _SignInManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        private readonly IEmailSender _EmailSender;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
         {
             _UserManager = userManager;
             _SignInManager = signInManager;
+            _EmailSender = emailSender;
         }
 
         [HttpGet]
@@ -46,6 +51,12 @@ namespace Mini_Cinema.Areas.Identity.Controllers
                 }
                 return View(registerVM);
             }
+            var link="";
+            await _EmailSender.SendEmailAsync(
+                registerVM.Email,
+                "Cinema Confirmation Email",
+                "<h1> please click <a href='{link}'> here </a> to confirm your Email "
+                );
             return RedirectToAction("Login");
         }
         [HttpGet]
@@ -65,6 +76,8 @@ namespace Mini_Cinema.Areas.Identity.Controllers
             if (!Result.Succeeded) {
                 if (Result.IsLockedOut) ModelState.AddModelError("", "too many attempts");
                 return View(loginVM);
+            } else if (Result.IsNotAllowed) {
+                ModelState.AddModelError("", "Plz Confirm you Email!!");
             }
             return RedirectToAction("Index","Home",new {area="Customer" });
         }

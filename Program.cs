@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Mini_Cinema.Migrations;
 using Mini_Cinema.Repositories;
+using Mini_Cinema.Utility;
 
 namespace Mini_Cinema
 {
@@ -23,6 +25,7 @@ namespace Mini_Cinema
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.User.RequireUniqueEmail = true;
+                option.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
@@ -31,6 +34,7 @@ namespace Mini_Cinema
             builder.Services.AddScoped<IRepository<Actor>, Repository<Actor>>();
             builder.Services.AddScoped<IExtentionRepository<MovieSubImages>, ExtentionRepository<MovieSubImages>>();
             builder.Services.AddScoped<IExtentionRepository<MovieActors>, ExtentionRepository<MovieActors>>();
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             var app = builder.Build();
 
