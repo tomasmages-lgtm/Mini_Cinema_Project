@@ -51,7 +51,8 @@ namespace Mini_Cinema.Areas.Identity.Controllers
                 }
                 return View(registerVM);
             }
-            var link="";
+            var Token = await _UserManager.GenerateEmailConfirmationTokenAsync(user);
+            var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = "Identity" , userID =user.Id, token=Token });
             await _EmailSender.SendEmailAsync(
                 registerVM.Email,
                 "Cinema Confirmation Email",
@@ -59,6 +60,17 @@ namespace Mini_Cinema.Areas.Identity.Controllers
                 );
             return RedirectToAction("Login");
         }
+
+        public async Task<IActionResult> ConfirmEmail( string userID,string token ) {
+            var User =await _UserManager.FindByIdAsync(userID);
+            var Result= await _UserManager.ConfirmEmailAsync(User,token);
+            if (!Result.Succeeded) {
+                return RedirectToAction(nameof(Login));
+            }
+            return RedirectToAction(nameof(Login));
+        }
+
+
         [HttpGet]
         public IActionResult Login()
         {
