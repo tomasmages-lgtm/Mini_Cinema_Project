@@ -9,6 +9,7 @@ namespace Mini_Cinema.Areas.Identity.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _UserManager;
+        private readonly SignInManager<ApplicationUser> _SignInManager;
 
         public AccountController(UserManager<ApplicationUser> userManager)
         {
@@ -51,7 +52,21 @@ namespace Mini_Cinema.Areas.Identity.Controllers
         {
             return View();
         }
-
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM loginVM)
+        {
+            var User = await _UserManager.FindByEmailAsync(loginVM.UserNameOrEmail) ?? await _UserManager.FindByNameAsync(loginVM.UserNameOrEmail);
+            if (User == null) {
+                ModelState.AddModelError("", "Invalid UserName or Password");
+                return View(loginVM);
+            }
+            var Result= await _SignInManager.PasswordSignInAsync(User,loginVM.Password,loginVM.RememberMe,true);
+            if (!Result.Succeeded) {
+                if (Result.IsLockedOut) ModelState.AddModelError("", "too many attempts");
+                return View(loginVM);
+            }
+            return RedirectToAction("Index","Home",new {area="Customer" });
+        }
     }
 }
 
