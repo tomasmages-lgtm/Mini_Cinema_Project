@@ -11,9 +11,10 @@ namespace Mini_Cinema.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _UserManager;
         private readonly SignInManager<ApplicationUser> _SignInManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _UserManager = userManager;
+            _SignInManager = signInManager;
         }
 
         [HttpGet]
