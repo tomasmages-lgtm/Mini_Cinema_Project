@@ -26,7 +26,8 @@ namespace Mini_Cinema
             {
                 option.User.RequireUniqueEmail = true;
                 option.SignIn.RequireConfirmedEmail = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
             builder.Services.AddScoped<IRepository<Movie>, Repository<Movie>>();
@@ -35,6 +36,7 @@ namespace Mini_Cinema
             builder.Services.AddScoped<IExtentionRepository<MovieSubImages>, ExtentionRepository<MovieSubImages>>();
             builder.Services.AddScoped<IExtentionRepository<MovieActors>, ExtentionRepository<MovieActors>>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
             var app = builder.Build();
 

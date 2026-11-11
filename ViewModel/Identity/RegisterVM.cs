@@ -10,7 +10,7 @@ namespace Mini_Cinema.ViewModel.Identity
         public string UserName { set; get; }
         [EmailAddress,DataType(DataType.EmailAddress)]
         public string Email { set; get; }
-        [DataType(DataType.Password)]
+        [DataType(DataType.Password)] 
         public string Password { set; get; }
         [DataType(DataType.Password),Compare(nameof(Password))]
 

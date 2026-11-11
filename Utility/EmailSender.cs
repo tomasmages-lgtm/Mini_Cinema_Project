@@ -6,30 +6,25 @@ namespace Mini_Cinema.Utility
 {
     public class EmailSender : IEmailSender
     {
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public Task SendEmailAsync(string email, string subject, string htmlMessage) // email ==> this email i want to send to
         {
-            var client = new SmtpClient("smtp.office365.com", 587)
+            var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(
-        "thooomasmaged@gmail.com",
-        "your password" // i have problem in MyEmail Account Cannot Support the app password Service
-    )
+                Credentials = new NetworkCredential("tomasmages@gmail.com", "moyr ewlg jsav iqrn")
             };
 
             return client.SendMailAsync(
-                new MailMessage(
-                    from: "thooomasmaged@gmail.com",
-                    to: email,
-                    subject: subject,
-                    body: htmlMessage
-                )
+                new MailMessage(from: "tomasmages@gmail.com",
+                                to: email,
+                                subject,
+                                htmlMessage
+                                )
                 {
                     IsBodyHtml = true
                 }
-            );
+                );
         }
     }
-
 }

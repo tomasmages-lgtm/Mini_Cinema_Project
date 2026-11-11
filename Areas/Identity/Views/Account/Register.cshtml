@@ -41,21 +41,31 @@
                         <div class="mb-3">
                             <div class="input-group flex-nowrap">
                                 <div class="form-floating flex-grow-1">
-                                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
-                                    <label asp-for="Password" class="text-danger">Password</label>
+                                    <input asp-for="Password" id="Password" type="password" class="form-control"
+                                           placeholder="Password" autocomplete="new-password" />
+                                    <label asp-for="Password">Password</label>
                                 </div>
+                                <button type="button" class="btn btn-outline-secondary toggle-password"
+                                        data-target="Password" aria-label="Show password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
-                            <span asp-validation-for="Password" class="field-error"></span>
+                            <span asp-validation-for="Password" class="field-error text-danger"></span>
                         </div>
 
                         <div class="mb-4">
                             <div class="input-group flex-nowrap">
                                 <div class="form-floating flex-grow-1">
-                                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
-                                    <label asp-for="ConfirmPassword" class="text-danger">ConfirmPassword</label>
+                                    <input asp-for="ConfirmPassword" id="ConfirmPassword" type="password" class="form-control"
+                                           placeholder="Confirm Password" autocomplete="new-password" />
+                                    <label asp-for="ConfirmPassword">Confirm Password</label>
                                 </div>
+                                <button type="button" class="btn btn-outline-secondary toggle-password"
+                                        data-target="ConfirmPassword" aria-label="Show password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
-                            <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+                            <span asp-validation-for="ConfirmPassword" class="field-error text-danger"></span>
                         </div>
 
                         <div class="d-grid">
@@ -74,3 +84,22 @@
     </div>
 </div>
 
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = document.getElementById(btn.dataset.target);
+                var icon = btn.querySelector('i');
+                var show = input.type === 'password';
+
+                input.type = show ? 'text' : 'password';
+                icon.classList.toggle('bi-eye', !show);
+                icon.classList.toggle('bi-eye-slash', show);
+                btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+            });
+        });
+    </script>
+}
